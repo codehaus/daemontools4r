@@ -104,6 +104,10 @@ module Daemontools4r
       @name
     end
 
+    def remove
+      @tree.remove_service( name )
+    end
+
     def normal_state
       @normal_state
     end
@@ -129,11 +133,23 @@ module Daemontools4r
     def svc(opt_sym)
       opt = SVC_OPTS[ opt_sym.to_s.downcase.to_sym ]
       throw RuntimeError.new( "unknown opt '#{opt_sym}'" ) unless opt
-      `svc -#{opt} #{path}` 
+      cmdline = "svc -#{opt} #{path}"
+      puts "CMD: #{cmdline}"
+      `#{cmdline}`
+    end
+
+    def down(wait_for=true)
+      svc :d
+      1.upto( 10 ) do |i|
+        return if down?
+        sleep( 1 )
+      end
     end
 
     def svstat
-      `svstat #{path}`
+      stat = `svstat #{path}`
+      pp stat
+      stat
     end
 
     def down?
