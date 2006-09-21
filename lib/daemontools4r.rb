@@ -84,7 +84,7 @@ module Daemontools4r
     def remove_service(name)
       throw RuntimeError.new( "invalid service #{name}" ) if ! File.directory?( @root + '/' + name )
       service = self[name]
-      `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && svc -dx .`
+      `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo svc -dx .`
     end
 
   end
