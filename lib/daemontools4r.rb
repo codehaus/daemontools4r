@@ -121,7 +121,7 @@ module Daemontools4r
     end
 
     def svok?
-      output = `svok #{path}`
+      output = `sudo svok #{path}`
       result = $?
       result == 0
     end
@@ -147,7 +147,7 @@ module Daemontools4r
     end
 
     def svstat
-      stat = `svstat #{path}`
+      stat = `sudo svstat #{path}`
       pp stat
       stat
     end
