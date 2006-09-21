@@ -90,9 +90,10 @@ module Daemontools4r
   end
 
   class Service
-    def initialize(tree,name)
+    def initialize(tree,name,normal_state=:up)
       @tree = tree
       @name = name
+      @normal_state = normal_state
     end
 
     def tree
@@ -101,6 +102,14 @@ module Daemontools4r
 
     def name
       @name
+    end
+
+    def normal_state
+      @normal_state
+    end
+
+    def normal_state=(state)
+      @normal_state = state
     end
 
     def path
@@ -124,7 +133,7 @@ module Daemontools4r
     end
 
     def svstat
-      `svstat`
+      `svstat #{path}`
     end
 
     def down?
@@ -133,6 +142,14 @@ module Daemontools4r
 
     def up?
       svstat.split( ' ' )[1] == 'up'
+    end
+
+    def want_up?
+      svstat =~ /want up/
+    end
+
+    def want_down?
+      svstat =~ /want down/
     end
 
   end

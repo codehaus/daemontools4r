@@ -82,6 +82,7 @@ class Daemontools4rTest < Test::Unit::TestCase
       service = tree.add_service( 'flapping-1-svc', service_path )
       assert_not_nil service
       assert service.svok?
+      assert service.up?
       tree.remove_service( 'flapping-1-svc' )
       assert_equal 0, tree.service_names.size
     end
