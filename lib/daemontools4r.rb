@@ -48,9 +48,11 @@ module Daemontools4r
         dir.each do |child|
           next if ( child == '.' || child == '..' )
           child_path = dir_path + '/' + child
-          if ( File.directory?( child_path ) ) 
-            names << child_path.sub( /^#{@root}\//, '' )
-            dir_paths << child_path
+          if ( File.directory?( child_path ) )
+            if ( ! ( child.to_s =~ /^\./ ) )
+              names << child_path.sub( /^#{@root}\//, '' )
+              dir_paths << child_path
+            end
           end
         end
       end
