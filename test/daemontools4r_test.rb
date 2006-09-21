@@ -79,12 +79,43 @@ class Daemontools4rTest < Test::Unit::TestCase
     svscan( tmp_service_dir ) do
       tree = Daemontools4r::ServiceTree.new( tmp_service_dir )
       assert_equal 0, tree.service_names.size
-      service = tree.add_service( 'flapping-1-svc', service_path )
+      service = tree.add_service 'flapping-1-svc', service_path 
       assert_not_nil service
       assert service.svok?
       assert service.up?
-      tree.remove_service( 'flapping-1-svc' )
+      service.remove
+      assert ! service.up?
       assert_equal 0, tree.service_names.size
+    end
+  end
+
+  def test_svc()
+    service_path = Daemontools4r.build_service( service_template_dir + '/flapping-app', tmp_service_real_dir + '/flapping-1' )
+    
+    svscan( tmp_service_dir ) do
+      tree = Daemontools4r::ServiceTree.new( tmp_service_dir )
+      assert_equal 0, tree.service_names.size
+      service = tree.add_service 'flapping-1-svc', service_path 
+      assert_not_nil service
+      assert service.svok?
+      assert service.up?
+      service.down
+      assert service.down?
+    end
+  end
+
+  def test_down_hung_app()
+    service_path = Daemontools4r.build_service( service_template_dir + '/hung-app', tmp_service_real_dir + '/hung-1' )
+    
+    svscan( tmp_service_dir ) do
+      tree = Daemontools4r::ServiceTree.new( tmp_service_dir )
+      assert_equal 0, tree.service_names.size
+      service = tree.add_service 'hung-1-svc', service_path 
+      assert_not_nil service
+      assert service.svok?
+      assert service.up?
+      service.down
+      assert service.down?
     end
   end
 
