@@ -81,13 +81,14 @@ module Daemontools4r
       return service
     end
 
-    def remove_service(name)
+    def remove_service(name,kill_after=60)
       throw RuntimeError.new( "invalid service #{name}" ) if ! File.directory?( @root + '/' + name )
       service = self[name]
       extra = ''
       if ( File.directory?( @root + '/' + name + '/log' ) )
         extra = '&& sudo svc -dx ./log'
       end
+      service.down! kill_after
       `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo svc -dx . #{extra}`
     end
 
@@ -137,7 +138,7 @@ module Daemontools4r
     def svc(opt_sym)
       opt = SVC_OPTS[ opt_sym.to_s.downcase.to_sym ]
       throw RuntimeError.new( "unknown opt '#{opt_sym}'" ) unless opt
-      cmdline = "svc -#{opt} #{path}"
+      cmdline = "sudo svc -#{opt} #{path}"
       puts "CMD: #{cmdline}"
       `#{cmdline}`
     end
@@ -146,6 +147,26 @@ module Daemontools4r
       svc :d
       1.upto( 10 ) do |i|
         return if down?
+        sleep( 1 )
+      end
+    end
+
+    def down!(kill_after=60)
+      svc :d
+      start = Time.now.to_i
+      while ( true )
+        return if down?
+        if ( (Time.now.to_i - start) >= kill_after )
+          svc :k
+          kill_start = Time.now.to_i
+          while ( true )
+            return if down?
+            if ( (Time.now_to_i - kill_start) >= kill_after )
+              throw RuntimeError.new( "service not down" )
+            end
+            sleep( 1 )
+          end
+        end
         sleep( 1 )
       end
     end
