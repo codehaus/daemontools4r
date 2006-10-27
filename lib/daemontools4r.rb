@@ -26,6 +26,7 @@ module Daemontools4r
       end
     end
     File.chmod( 0755, output_path + '/run' ) if File.exist?( output_path + '/run' )
+    File.chmod( 0755, output_path + '/log/run' ) if File.exist?( output_path + '/log/run' )
     output_path
   end
 
