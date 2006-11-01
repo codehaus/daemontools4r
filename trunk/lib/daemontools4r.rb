@@ -93,7 +93,9 @@ module Daemontools4r
         extra = '&& sudo #{DAEMONTOOLS_PATH}svc -dx ./log'
       end
       service.down! kill_after
-      `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo #{DAEMONTOOLS_PATH}svc -dx . #{extra}`
+      cmdline = "cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo #{DAEMONTOOLS_PATH}svc -dx . #{extra}"
+      puts "CMD: #{cmdline}"
+      `#{cmdline}`
     end
 
   end
@@ -130,7 +132,9 @@ module Daemontools4r
     end
 
     def svok?
-      output = `sudo #{DAEMONTOOLS_PATH}svok #{path}`
+      cmdline = "sudo #{DAEMONTOOLS_PATH}svok #{path}"
+      puts "CMD: #{cmdline}"
+      output = `#{cmdline}`
       result = $?
       result == 0
     end
@@ -176,7 +180,9 @@ module Daemontools4r
     end
 
     def svstat
-      stat = `sudo #{DAEMONTOOLS_PATH}svstat #{path}`
+      cmdline = "sudo #{DAEMONTOOLS_PATH}svstat #{path}"
+      puts "CMD: #{cmdline}"
+      stat = `#{cmdline}`
       pp stat
       stat
     end
