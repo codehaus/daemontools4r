@@ -90,7 +90,7 @@ module Daemontools4r
       service = self[name]
       extra = ''
       if ( File.directory?( @root + '/' + name + '/log' ) )
-        extra = '&& sudo #{DAEMONTOOLS_PATH}svc -dx ./log'
+        extra = "&& sudo #{DAEMONTOOLS_PATH}svc -dx ./log"
       end
       service.down! kill_after
       cmdline = "cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo #{DAEMONTOOLS_PATH}svc -dx . #{extra}"
