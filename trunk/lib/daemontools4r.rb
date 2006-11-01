@@ -2,6 +2,9 @@
 require 'fileutils'
 
 module Daemontools4r
+  #Make sure there's a trailing slash
+  DAEMONTOOLS_PATH = '/package/admin/daemontools/command/'
+  
   SVC_OPTS = {
     :u=>'u', :up=>'u',
     :d=>'d', :down=>'d',
@@ -87,10 +90,10 @@ module Daemontools4r
       service = self[name]
       extra = ''
       if ( File.directory?( @root + '/' + name + '/log' ) )
-        extra = '&& sudo svc -dx ./log'
+        extra = '&& sudo #{DAEMONTOOLS_PATH}svc -dx ./log'
       end
       service.down! kill_after
-      `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo svc -dx . #{extra}`
+      `cd #{@root}/#{name} && rm #{File.expand_path(@root)}/#{name} && sudo #{DAEMONTOOLS_PATH}svc -dx . #{extra}`
     end
 
   end
@@ -127,7 +130,7 @@ module Daemontools4r
     end
 
     def svok?
-      output = `sudo svok #{path}`
+      output = `sudo #{DAEMONTOOLS_PATH}svok #{path}`
       result = $?
       result == 0
     end
@@ -139,7 +142,7 @@ module Daemontools4r
     def svc(opt_sym)
       opt = SVC_OPTS[ opt_sym.to_s.downcase.to_sym ]
       throw RuntimeError.new( "unknown opt '#{opt_sym}'" ) unless opt
-      cmdline = "sudo svc -#{opt} #{path}"
+      cmdline = "sudo #{DAEMONTOOLS_PATH}svc -#{opt} #{path}"
       puts "CMD: #{cmdline}"
       `#{cmdline}`
     end
@@ -173,7 +176,7 @@ module Daemontools4r
     end
 
     def svstat
-      stat = `sudo svstat #{path}`
+      stat = `sudo #{DAEMONTOOLS_PATH}svstat #{path}`
       pp stat
       stat
     end
