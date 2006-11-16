@@ -169,7 +169,7 @@ module Daemontools4r
           kill_start = Time.now.to_i
           while ( true )
             return if down?
-            if ( (Time.now_to_i - kill_start) >= kill_after )
+            if ( (Time.now.to_i - kill_start) >= kill_after )
               throw RuntimeError.new( "service not down" )
             end
             sleep( 1 )
